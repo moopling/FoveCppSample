@@ -22,5 +22,6 @@ VSO vert(VSI i) {
 	o.p = mul(float4(i.p.xyz, 1.0), modelviewProjection);             // Transform the input world position by the modelview & projection
 	float selectColor = 1.5 * max(0.0, 0.5 - abs(selection - i.p.w)); // Determine if this vert belongs to the selected object (0 if not)
 	o.c = i.c + float3(selectColor, selectColor, selectColor);        // Pass the color through, but also highlight if selected
+	
 	return o;
 };
