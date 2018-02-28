@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\samue\source\repos\FoveCppSample\CMakeFiles\0d39a76b56c6b3aa4879bfef8915526f\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{F48851B5-AD89-3E28-87EB-B9E762CA136B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

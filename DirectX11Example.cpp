@@ -291,43 +291,43 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 			}
 
 			// Compute selection based on eye gaze
-			Fove::SFVR_GazeConvergenceData convergence;
-			const Fove::EFVR_ErrorCode gazeError = headset->GetGazeConvergence(&convergence);
-			if (Fove::EFVR_ErrorCode::None == gazeError) {
-				// Get the eye ray. The FOVE SDK will return the better of the two eye rays here
-				// For now we rely exclusively on the ray. In the future, as convergence distance
-				// reporting becomes more accurate, we can use it to distinguish ray-hits by distance
-				Fove::SFVR_Ray ray = convergence.ray;
+			//Fove::SFVR_GazeConvergenceData convergence;
+			//const Fove::EFVR_ErrorCode gazeError = headset->GetGazeConvergence(&convergence);
+			//if (Fove::EFVR_ErrorCode::None == gazeError) {
+			//	// Get the eye ray. The FOVE SDK will return the better of the two eye rays here
+			//	// For now we rely exclusively on the ray. In the future, as convergence distance
+			//	// reporting becomes more accurate, we can use it to distinguish ray-hits by distance
+			//	Fove::SFVR_Ray ray = convergence.ray;
 
-				// Since the convergence ray does not include the headset orienation,
-				// or any other transforms we made such as the player height transform,
-				// we need to adjust it by the camera matrix from last frame.
-				// Since the last-frame cameraMatrix represents what is actually on screen,
-				// it's a good indicator of what the user is looking at
-				// It is also possible to just recompute it from the old pose, or fetch a new pose.
-				//cameraMatrix = TranslationMatrix(0, playerHeight, 0);
-				ray.origin = TransformPoint(cameraMatrix, ray.origin, 1);
-				ray.direction = TransformPoint(cameraMatrix, ray.direction, 0); // 0 indicates we get rotation but no offset
+			//	// Since the convergence ray does not include the headset orienation,
+			//	// or any other transforms we made such as the player height transform,
+			//	// we need to adjust it by the camera matrix from last frame.
+			//	// Since the last-frame cameraMatrix represents what is actually on screen,
+			//	// it's a good indicator of what the user is looking at
+			//	// It is also possible to just recompute it from the old pose, or fetch a new pose.
+			//	//cameraMatrix = TranslationMatrix(0, playerHeight, 0);
+			//	ray.origin = TransformPoint(cameraMatrix, ray.origin, 1);
+			//	ray.direction = TransformPoint(cameraMatrix, ray.direction, 0); // 0 indicates we get rotation but no offset
 
-				// Each selectable model in the scene is represented by a sphere
-				// Having a more abstract collision shape than the actual polygon structure helps with accuracy
-				// Each sphere is made of 5 floats: selectionid, radius, centerx, centery, centerz
-				constexpr size_t numSphereFloats = sizeof(collisionSpheres) / sizeof(float);
-				static_assert(numSphereFloats % 5 == 0, "Invalid collision sphere format");
-				constexpr size_t numSpheres = numSphereFloats / 5;
-				for (size_t i = 0; i < numSpheres; ++i) {
-					// Get the parameters of this sphere
-					const float selectionid = collisionSpheres[i * 5 + 0];
-					const float radius = collisionSpheres[i * 5 + 1];
-					const Fove::SFVR_Vec3 center{ collisionSpheres[i * 5 + 2], collisionSpheres[i * 5 + 3], collisionSpheres[i * 5 + 4] };
+			//	// Each selectable model in the scene is represented by a sphere
+			//	// Having a more abstract collision shape than the actual polygon structure helps with accuracy
+			//	// Each sphere is made of 5 floats: selectionid, radius, centerx, centery, centerz
+			//	constexpr size_t numSphereFloats = sizeof(collisionSpheres) / sizeof(float);
+			//	static_assert(numSphereFloats % 5 == 0, "Invalid collision sphere format");
+			//	constexpr size_t numSpheres = numSphereFloats / 5;
+			//	for (size_t i = 0; i < numSpheres; ++i) {
+			//		// Get the parameters of this sphere
+			//		const float selectionid = collisionSpheres[i * 5 + 0];
+			//		const float radius = collisionSpheres[i * 5 + 1];
+			//		const Fove::SFVR_Vec3 center{ collisionSpheres[i * 5 + 2], collisionSpheres[i * 5 + 3], collisionSpheres[i * 5 + 4] };
 
-					// Determine if this sphere intersects
-					if (RaySphereCollision(ray, center, radius)) {
-						selection = selectionid;
-						break; // Break upon the first hit
-					}
-				}
-			}
+			//		// Determine if this sphere intersects
+			//		if (RaySphereCollision(ray, center, radius)) {
+			//			selection = selectionid;
+			//			break; // Break upon the first hit
+			//		}
+			//	}
+			//}
 		}
 
 		// Wait for the compositor to tell us to render

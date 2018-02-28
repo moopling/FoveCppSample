@@ -1,2 +1,12 @@
 # For Qt Creator IDE
 CMakeLists.txt.user*
+*.tlog
+*.log
+*.obj
+*.ipch
+*.rule
+*.pdb
+/FOVE SDK 0.13.0/bin
+/Debug
+/CMakeFiles
+/.vs

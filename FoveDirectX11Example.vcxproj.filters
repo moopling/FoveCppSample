@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\samue\source\repos\FoveCppSample\WindowsUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\samue\source\repos\FoveCppSample\DirectX11Example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\samue\source\repos\FoveCppSample\Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\samue\source\repos\FoveCppSample\DXUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\NativeUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\WindowsUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\DXUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\samue\source\repos\FoveCppSample\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.vert.hlsl" />
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.frag.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{AD910F22-65E3-3D07-A2B5-2121E440ADC7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{C4A6DACE-1493-3AF3-8172-507C17C5010B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
