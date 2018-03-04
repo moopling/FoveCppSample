@@ -17,7 +17,7 @@ struct VSO {
 };
 
 // Entry point of the shader
-VSO vert(VSI i) {
+VSO ModelVertexShader(VSI i) {
 	VSO o;
 	o.p = mul(float4(i.p.xyz, 1.0), modelviewProjection);             // Transform the input world position by the modelview & projection
 	float selectColor = 1.5 * max(0.0, 0.5 - abs(selection - i.p.w)); // Determine if this vert belongs to the selected object (0 if not)

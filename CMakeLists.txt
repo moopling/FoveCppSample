@@ -63,11 +63,13 @@ else()
 endif()
 if(FOVE_BUILD_DIRECTX11_EXAMPLE)
 	# Declare the DirectX11 example target to cmake
-	add_executable(FoveDirectX11Example ${NativeUtilFiles} Shader.vert.hlsl Shader.frag.hlsl DirectX11Example.cpp Util.h Util.cpp DXUtil.h DXUtil.cpp)
+	add_executable(FoveDirectX11Example ${NativeUtilFiles} model.vert.hlsl model.pix.hlsl texture.vert.hlsl texture.pix.hlsl DirectX11Example.cpp Util.h Util.cpp DXUtil.h DXUtil.cpp)
 
 	# Tell the build system to compile the shaders to a header file, and give the shader compiler build info like the entry point
-	set_source_files_properties(Shader.vert.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Vertex VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT vert)
-	set_source_files_properties(Shader.frag.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Pixel  VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT frag)
+	set_source_files_properties(model.vert.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Vertex VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT ModelVertexShader)
+	set_source_files_properties(model.pix.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Pixel  VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT ModelPixelShader)
+	set_source_files_properties(texture.vert.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Vertex VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT TextureVertexShader)
+	set_source_files_properties(texture.pix.hlsl PROPERTIES VS_SHADER_FLAGS "/Fh \"$(OutDir)%(Filename)_compiled.h\"" VS_SHADER_TYPE Pixel  VS_SHADER_MODEL 4.0 VS_SHADER_ENTRYPOINT TexturePixelShader)
 
 	# Include the directory where the compiled shader header files will be put
 	# Note: include_directories/target_include_directories directories don't work here
@@ -77,40 +79,6 @@ if(FOVE_BUILD_DIRECTX11_EXAMPLE)
 
 	# Add the DirectX11 example to our list of targets which is used below
 	list(APPEND alltargets FoveDirectX11Example)
-endif()
-
-# Create the OpenGL example, and the option to enable/disable it
-if(WIN32)
-	option(FOVE_BUILD_OPENGL_EXAMPLE "Enable building of the OpenGL Example" ON)
-else()
-	option(FOVE_BUILD_OPENGL_EXAMPLE "Enable building of the OpenGL Example" OFF)
-endif()
-if(FOVE_BUILD_OPENGL_EXAMPLE)
-	# Declare platform specific files
-	if (WIN32)
-		set(FoveOpenGLExamplePlatformSourceFiles DXUtil.h DXUtil.cpp)
-	endif()
-
-	# Declare the OpenGL example target to cmake
-	add_executable(FoveOpenGLExample ${NativeUtilFiles} OpenGLExample.cpp Util.h Util.cpp OpenGLUtil.h OpenGLUtil.cpp ${FoveOpenGLExamplePlatformSourceFiles})
-
-	# Link to OpenGL libraries
-	if (WIN32)
-		target_link_libraries(FoveOpenGLExample "opengl32.lib")
-	endif()
-
-	# Add the OpenGL example to our list of targets which is used below
-	list(APPEND alltargets FoveOpenGLExample)
-endif()
-
-# Create the data example, and the option to enable/disable it
-option(FOVE_BUILD_DATA_EXAMPLE "Enable building of the Data Example" ON)
-if(FOVE_BUILD_DATA_EXAMPLE)
-	# Declare the Data example target to cmake
-	add_executable(FoveDataExample DataExample.cpp Util.h Util.cpp)
-
-	# Add the Data example to our list of targets which is used below
-	list(APPEND alltargets FoveDataExample)
 endif()
 
 # Add a post-build command to each target to copy the FoveClient dynamic library to the executable location

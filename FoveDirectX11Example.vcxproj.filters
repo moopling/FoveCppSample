@@ -32,8 +32,10 @@
     <CustomBuild Include="C:\Users\samue\source\repos\FoveCppSample\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.vert.hlsl" />
-    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.frag.hlsl" />
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\model.vert.hlsl" />
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\model.pix.hlsl" />
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\texture.vert.hlsl" />
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\texture.pix.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

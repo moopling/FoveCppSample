@@ -358,15 +358,27 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\NativeUtil.h" />
     <ClInclude Include="C:\Users\samue\source\repos\FoveCppSample\WindowsUtil.h" />
     <ClCompile Include="C:\Users\samue\source\repos\FoveCppSample\WindowsUtil.cpp"  />
-    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.vert.hlsl">
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\model.vert.hlsl">
       <ShaderType>Vertex</ShaderType>
-      <EntryPointName>vert</EntryPointName>
+      <EntryPointName>ModelVertexShader</EntryPointName>
       <ShaderModel>4.0</ShaderModel>
       <AdditionalOptions>/Fh "$(OutDir)%(Filename)_compiled.h"</AdditionalOptions>
     </FXCompile>
-    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\Shader.frag.hlsl">
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\model.pix.hlsl">
       <ShaderType>Pixel</ShaderType>
-      <EntryPointName>frag</EntryPointName>
+      <EntryPointName>ModelPixelShader</EntryPointName>
+      <ShaderModel>4.0</ShaderModel>
+      <AdditionalOptions>/Fh "$(OutDir)%(Filename)_compiled.h"</AdditionalOptions>
+    </FXCompile>
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\texture.vert.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <EntryPointName>TextureVertexShader</EntryPointName>
+      <ShaderModel>4.0</ShaderModel>
+      <AdditionalOptions>/Fh "$(OutDir)%(Filename)_compiled.h"</AdditionalOptions>
+    </FXCompile>
+    <FXCompile Include="C:\Users\samue\source\repos\FoveCppSample\texture.pix.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <EntryPointName>TexturePixelShader</EntryPointName>
       <ShaderModel>4.0</ShaderModel>
       <AdditionalOptions>/Fh "$(OutDir)%(Filename)_compiled.h"</AdditionalOptions>
     </FXCompile>

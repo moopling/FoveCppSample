@@ -18,8 +18,10 @@
 // Include the compiled shaders
 // The .hlsl shader source files are added to the project from CMakeList.txt
 // The build process will then compile them into C arrays and generate these header files
-#include "Shader.frag_compiled.h"
-#include "Shader.vert_compiled.h"
+#include "model.pix_compiled.h"
+#include "model.vert_compiled.h"
+#include "texture.pix_compiled.h"
+#include "texture.vert_compiled.h"
 
 // Use std namespace for convenience
 using namespace std;
@@ -149,10 +151,58 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 	if (FAILED(err) || !backBuffer)
 		throw runtime_error("Unable to create render target view: " + HResultToString(err));
 
+	D3D11_TEXTURE2D_DESC textureDesc;
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+
+	// Initialize the render target texture description.
+	ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+	// Setup the render target texture description.
+	textureDesc.Width = renderSurfaceSize.x * 2;
+	textureDesc.Height = renderSurfaceSize.y;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	//// Create the render target texture.
+	CComPtr<ID3D11Texture2D> renderTargetTexture;
+	err = device->CreateTexture2D(&textureDesc, NULL, &renderTargetTexture);
+	if (FAILED(err) || !renderTargetTexture)
+		throw runtime_error("Unable to create render target texture: " + HResultToString(err));
+
+	//// Setup the description of the render target view.
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+	//// Setup the description of the shader resource view.
+	shaderResourceViewDesc.Format = textureDesc.Format;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	//// Create the shader resource view.
+	CComPtr<ID3D11ShaderResourceView> shaderResourceView;
+	err = device->CreateShaderResourceView(renderTargetTexture, &shaderResourceViewDesc, &shaderResourceView);
+	if (FAILED(err) || !shaderResourceView)
+		throw runtime_error("Unable to create render target view: " + HResultToString(err));
+
 	// Create a render target view
 	CComPtr<ID3D11RenderTargetView> renderTargetView;
-	err = device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
+	err = device->CreateRenderTargetView(renderTargetTexture, &renderTargetViewDesc, &renderTargetView);
+	//err = device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
 	if (FAILED(err) || !renderTargetView)
+		throw runtime_error("Unable to create render target view: " + HResultToString(err));
+
+	CComPtr<ID3D11RenderTargetView> renderTargetView2;
+	err = device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView2);
+	if (FAILED(err) || !renderTargetView2)
 		throw runtime_error("Unable to create render target view: " + HResultToString(err));
 
 	// Create the depth buffer
@@ -211,28 +261,28 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 	rightViewport.TopLeftX = (FLOAT)renderSurfaceSize.x;
 
 	// Create the vertex shader
-	CComPtr<ID3D11VertexShader> vertexShader;
-	err = device->CreateVertexShader(g_vert, sizeof(g_vert), nullptr, &vertexShader);
-	if (FAILED(err) || !vertexShader)
+	CComPtr<ID3D11VertexShader> modelVertexShader;
+	err = device->CreateVertexShader(g_ModelVertexShader, sizeof(g_ModelVertexShader), nullptr, &modelVertexShader);
+	if (FAILED(err) || !modelVertexShader)
 		throw runtime_error("Unable to create vertex shader: " + HResultToString(err));
-	deviceContext->VSSetShader(vertexShader, nullptr, 0);
+	deviceContext->VSSetShader(modelVertexShader, nullptr, 0);
 
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	CComPtr<ID3D11InputLayout> vertexLayout;
-	err = device->CreateInputLayout(layout, ARRAYSIZE(layout), g_vert, sizeof(g_vert), &vertexLayout);
-	if (FAILED(err) || !vertexLayout)
+	CComPtr<ID3D11InputLayout> modelVertexLayout;
+	err = device->CreateInputLayout(layout, ARRAYSIZE(layout), g_ModelVertexShader, sizeof(g_ModelVertexShader), &modelVertexLayout);
+	if (FAILED(err) || !modelVertexLayout)
 		throw runtime_error("Unable to create vertex layout: " + HResultToString(err));
-	deviceContext->IASetInputLayout(vertexLayout);
+	deviceContext->IASetInputLayout(modelVertexLayout);
 
 	// Create and set the pixel shader
-	CComPtr<ID3D11PixelShader> pixelShader;
-	err = device->CreatePixelShader(g_frag, sizeof(g_frag), nullptr, &pixelShader);
-	if (FAILED(err) || !pixelShader)
+	CComPtr<ID3D11PixelShader> modelPixelShader;
+	err = device->CreatePixelShader(g_ModelPixelShader, sizeof(g_ModelPixelShader), nullptr, &modelPixelShader);
+	if (FAILED(err) || !modelPixelShader)
 		throw runtime_error("Unable to create pixel shader: " + HResultToString(err));
-	deviceContext->PSSetShader(pixelShader, nullptr, 0);
+	deviceContext->PSSetShader(modelPixelShader, nullptr, 0);
 
 	// Create vertex buffer
 	static_assert(sizeof(levelModelVerts) % 3 == 0, "Verts array size should be a multiple of 3 (triangles)");
@@ -264,6 +314,89 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 	if (FAILED(err) || !constantBuffer)
 		throw runtime_error("Unable to create constant buffer: " + HResultToString(err));
 	deviceContext->VSSetConstantBuffers(0, 1, BindInputArray(constantBuffer));
+
+
+	// Texture stuff here
+
+	// Create the vertex shader
+	CComPtr<ID3D11VertexShader> textureVertexShader;
+	err = device->CreateVertexShader(g_TextureVertexShader, sizeof(g_TextureVertexShader), nullptr, &textureVertexShader);
+	if (FAILED(err) || !textureVertexShader)
+		throw runtime_error("Unable to create vertex shader: " + HResultToString(err));
+	deviceContext->VSSetShader(textureVertexShader, nullptr, 0);
+
+	D3D11_INPUT_ELEMENT_DESC layout2[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	
+	CComPtr<ID3D11SamplerState> sampleState;
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	// Create the texture sampler state.
+	err = device->CreateSamplerState(&samplerDesc, &sampleState);
+	if (FAILED(err) || !sampleState)
+		throw runtime_error("Unable to create sampler: " + HResultToString(err));
+
+	deviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
+
+	CComPtr<ID3D11InputLayout> textureVertexLayout;
+	err = device->CreateInputLayout(layout2, ARRAYSIZE(layout2), g_TextureVertexShader, sizeof(g_TextureVertexShader), &textureVertexLayout);
+	if (FAILED(err) || !textureVertexLayout)
+		throw runtime_error("Unable to create vertex layout: " + HResultToString(err));
+	deviceContext->IASetInputLayout(textureVertexLayout);
+
+	// Create and set the pixel shader
+	CComPtr<ID3D11PixelShader> texturePixelShader;
+	err = device->CreatePixelShader(g_TexturePixelShader, sizeof(g_TexturePixelShader), nullptr, &texturePixelShader);
+	if (FAILED(err) || !texturePixelShader)
+		throw runtime_error("Unable to create pixel shader: " + HResultToString(err));
+	deviceContext->PSSetShader(texturePixelShader, nullptr, 0);
+
+	// Create vertex buffer
+
+	float left = (float)(-renderSurfaceSize.x);
+	float right = (float)(renderSurfaceSize.x);
+	float top = (float)(renderSurfaceSize.y/2);
+	float bottom = (float)(-renderSurfaceSize.y / 2);
+
+	const float screenVerts[] = {
+		left, bottom, 0, 0, 0, 0,
+		left, top, 0, 0, 0, 1,
+		right, top, 0, 0, 1, 1,
+		left , bottom, 0, 0, 0, 0,
+		right, top, 0, 0, 1, 1,
+		right, bottom, 0, 1, 0,
+	};
+
+	D3D11_BUFFER_DESC vertexBufferDesc2;
+	ZeroMemory(&vertexBufferDesc2, sizeof(vertexBufferDesc2));
+	vertexBufferDesc2.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc2.ByteWidth = sizeof(screenVerts);
+	vertexBufferDesc2.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc2.CPUAccessFlags = 0;
+	D3D11_SUBRESOURCE_DATA InitData2;
+	ZeroMemory(&InitData2, sizeof(InitData2));
+	InitData2.pSysMem = screenVerts;
+	CComPtr<ID3D11Buffer> vertexBuffer2;
+	err = device->CreateBuffer(&vertexBufferDesc, &InitData2, &vertexBuffer2);
+	if (FAILED(err) || !vertexBuffer2)
+		throw runtime_error("Unable to create vertex buffer: " + HResultToString(err));
+	deviceContext->IASetVertexBuffers(0, 1, BindInputArray(vertexBuffer2), BindInputArray<UINT>(sizeof(float) * floatsPerVert), BindInputArray<UINT>(0));
+
 
 	// Main loop
 	Fove::SFVR_Matrix44 cameraMatrix; // Stores the camera translation used each frame
@@ -345,6 +478,14 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 
 		// Render the scene
 		{
+			deviceContext->IASetVertexBuffers(0, 1, BindInputArray(vertexBuffer), BindInputArray<UINT>(sizeof(float) * floatsPerVert), BindInputArray<UINT>(0));
+			deviceContext->PSSetShader(modelPixelShader, nullptr, 0);
+			deviceContext->VSSetShader(modelVertexShader, nullptr, 0);
+			deviceContext->IASetInputLayout(modelVertexLayout);
+
+			/*deviceContext->OMSetRenderTargets(1, BindInputArray(renderTargetView), depthStencilView);
+			deviceContext->OMSetDepthStencilState(depthStencilState, 1);*/
+
 			// Clear the back buffer
 			const float color[] = { 0.3f, 0.3f, 0.8f, 0.3f };
 			deviceContext->ClearRenderTargetView(renderTargetView, color);
@@ -383,6 +524,19 @@ void Main(NativeLaunchInfo nativeLaunchInfo) try {
 		// Present rendered results to compositor
 		if (layer)
 		{
+			deviceContext->IASetVertexBuffers(0, 1, BindInputArray(vertexBuffer2), BindInputArray<UINT>(sizeof(float) * floatsPerVert), BindInputArray<UINT>(0));
+			deviceContext->PSSetShader(texturePixelShader, nullptr, 0);
+			deviceContext->VSSetShader(textureVertexShader, nullptr, 0);
+			deviceContext->IASetInputLayout(textureVertexLayout);
+			deviceContext->OMSetRenderTargets(1, BindInputArray(renderTargetView2), NULL);
+
+			const float color[] = { 0.3f, 0.3f, 0.8f, 0.3f };
+			deviceContext->ClearRenderTargetView(renderTargetView2, color);
+
+			static constexpr size_t numVerts = sizeof(screenVerts) / (sizeof(float) * floatsPerVert);
+			deviceContext->Draw(numVerts, 0);
+
+			//renderTargetTexture
 			Fove::SFVR_CompositorTexture tex(backBuffer);
 			Fove::SFVR_CompositorLayerSubmitInfo submitInfo;
 			submitInfo.layerId = layer->layerId;

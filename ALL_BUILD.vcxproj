@@ -164,17 +164,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{39BE106F-7F98-3B7C-8E20-FFCBF3C3B911}</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\samue\source\repos\FoveCppSample\FoveDataExample.vcxproj">
-      <Project>{2AE28C51-3B64-340C-837D-14E447A463B1}</Project>
-      <Name>FoveDataExample</Name>
-    </ProjectReference>
     <ProjectReference Include="C:\Users\samue\source\repos\FoveCppSample\FoveDirectX11Example.vcxproj">
       <Project>{9078A9DE-28BA-3DB2-ACCF-B86C8ACE03D0}</Project>
       <Name>FoveDirectX11Example</Name>
-    </ProjectReference>
-    <ProjectReference Include="C:\Users\samue\source\repos\FoveCppSample\FoveOpenGLExample.vcxproj">
-      <Project>{49C25D99-D1D4-370E-A58B-D65605E00B53}</Project>
-      <Name>FoveOpenGLExample</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
